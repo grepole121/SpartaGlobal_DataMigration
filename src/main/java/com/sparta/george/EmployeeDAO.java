@@ -1,11 +1,8 @@
 package com.sparta.george;
 
-import javax.swing.plaf.nimbus.State;
-import java.io.FileReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class EmployeeDAO {
     private final String URL = "jdbc:mysql://127.0.0.1:3306/mylocal";
@@ -24,21 +21,21 @@ public class EmployeeDAO {
             "salary int, " +
             "PRIMARY KEY (EmpID));";
     private final String selectingEmployees = "SELECT * FROM Employees";
-    private final String addEmployee = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private final String addEmployee = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE EmpID=EmpID;";
 
-    public int insertEmployee(Employee employee){
+    public int insertEmployee(EmployeeDTO employeeDTO){
         int hasRun = 0;
         try (PreparedStatement preparedStatement = connectToDatabase().prepareStatement(addEmployee)){
-            preparedStatement.setInt(1, employee.getEmpID());
-            preparedStatement.setString(2, employee.getNamePrefix());
-            preparedStatement.setString(3, employee.getFirstName());
-            preparedStatement.setString(4, employee.getMiddleInitial());
-            preparedStatement.setString(5, employee.getLastName());
-            preparedStatement.setString(6, employee.getGender());
-            preparedStatement.setString(7, employee.getEmail());
-            preparedStatement.setDate(8, new java.sql.Date(employee.getDateOfBirth().getTime()));
-            preparedStatement.setDate(9, new java.sql.Date(employee.getDateOfJoining().getTime()));
-            preparedStatement.setInt(10, employee.getSalary());
+            preparedStatement.setInt(1, employeeDTO.getEmpID());
+            preparedStatement.setString(2, employeeDTO.getNamePrefix());
+            preparedStatement.setString(3, employeeDTO.getFirstName());
+            preparedStatement.setString(4, employeeDTO.getMiddleInitial());
+            preparedStatement.setString(5, employeeDTO.getLastName());
+            preparedStatement.setString(6, employeeDTO.getGender());
+            preparedStatement.setString(7, employeeDTO.getEmail());
+            preparedStatement.setDate(8, new java.sql.Date(employeeDTO.getDateOfBirth().getTime()));
+            preparedStatement.setDate(9, new java.sql.Date(employeeDTO.getDateOfJoining().getTime()));
+            preparedStatement.setInt(10, employeeDTO.getSalary());
 
             hasRun = preparedStatement.executeUpdate();
 
@@ -56,7 +53,7 @@ public class EmployeeDAO {
     public void getAllEmployees() throws SQLException {
         Statement statement = connectToDatabase().createStatement();
         ResultSet resultSet = statement.executeQuery(selectingEmployees);
-        List<Employee> employeeList = new ArrayList<>();
+        List<EmployeeDTO> employeeDTOList = new ArrayList<>();
         if (resultSet != null) {
             while (resultSet.next()) {
 //                employeeList.add(new Employee(resultSet.getString(1),

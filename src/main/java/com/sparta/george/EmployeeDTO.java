@@ -2,7 +2,7 @@ package com.sparta.george;
 
 import java.util.Date;
 
-public class Employee {
+public class EmployeeDTO {
     private int empID;
     private String namePrefix;
     private String firstName;
@@ -14,9 +14,9 @@ public class Employee {
     private Date dateOfJoining;
     private int salary;
 
-    public Employee(){}
+    public EmployeeDTO(){}
 
-    public Employee(int empID, String namePrefix, String firstName, String middleInitial, String lastName, String gender, String email, Date dateOfBirth, Date dateOfJoining, int salary) {
+    public EmployeeDTO(int empID, String namePrefix, String firstName, String middleInitial, String lastName, String gender, String email, Date dateOfBirth, Date dateOfJoining, int salary) {
         this.empID = empID;
         this.namePrefix = namePrefix;
         this.firstName = firstName;

@@ -8,9 +8,9 @@ public class Starter {
         EmployeeDAO employeeDAO = new EmployeeDAO();
 //        employeeDAO.createTableIfNeeded();
 
-        List<Employee> employeeList = ReadFile.readFile();
-        for (Employee employee: employeeList){
-            employeeDAO.insertEmployee(employee);
+        List<EmployeeDTO> employeeDTOList = ReadFile.readFile();
+        for (EmployeeDTO employeeDTO : employeeDTOList){
+            employeeDAO.insertEmployee(employeeDTO);
         }
         employeeDAO.getAllEmployees();
     }
