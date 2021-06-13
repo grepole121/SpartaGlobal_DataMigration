@@ -7,14 +7,32 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Starter {
-    public static void start() throws SQLException, FileNotFoundException {
+    public static void start(int numberOfThreads) throws SQLException, FileNotFoundException {
         EmployeeDAO employeeDAO = new EmployeeDAO();
         FileReader csvFile = new FileReader("resources/employees.csv");
         employeeDAO.createTableIfNeeded();
 
-        addToDb(employeeDAO, readFile(csvFile));
+//        Sequential Method
+//        addToDb(employeeDAO, readFile(csvFile));
 
-//        employeeDAO.getAllEmployees();
+//        Concurrent method
+        Thread thread = new Thread(new Task());
+        thread.setName("Thread1");
+        thread.start();
+
+        Thread thread2 = new Thread(new Task());
+        thread.setName("Thread2");
+        thread.start();
+
+
+//        List<EmployeeDTO> employeeDTOList = readFile(csvFile);
+//        for (int i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
+//            int startOfSubList = i - employeeDTOList.size() / numberOfThreads;
+//            Thread thread = new Thread(new Task());
+//            System.out.println();
+////            addToDb(employeeDAO, employeeDTOList.subList(startOfSubList, i));
+//        }
+
     }
 
     public static void addToDb(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
