@@ -8,7 +8,8 @@ import java.util.List;
 public class Starter {
     public static int start(int numberOfThreads) throws SQLException, FileNotFoundException, InterruptedException {
         EmployeeDAO employeeDAO = new EmployeeDAO();
-        FileReader csvFile = new FileReader("resources/employees.csv");
+        FileReader csvFile = new FileReader("resources/EmployeeRecordsLarge.csv");
+        employeeDAO.dropTable();
         employeeDAO.createTableIfNeeded();
         int startingAmountOfEmployees = employeeDAO.countAllEmployees();
 
@@ -23,17 +24,26 @@ public class Starter {
         return endingAmountOfEmployees - startingAmountOfEmployees;
     }
 
-    private static void runConcurrently(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList, int numberOfThreads) throws InterruptedException {
-        Thread[] threads = new Thread[numberOfThreads];
-
+    public static void runConcurrently(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList, int numberOfThreads) throws InterruptedException {
+        Thread[] threads = new Thread[numberOfThreads + 1];
+        int i;
         int threadCounter = 0;
-        for (int i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
+        for (i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
             int startOfSubList = i - employeeDTOList.size() / numberOfThreads;
             threads[threadCounter] = new Thread(new Task(employeeDAO, employeeDTOList.subList(startOfSubList, i)));
             threads[threadCounter].setName("Thread" + threadCounter);
 
             threads[threadCounter].start();
             threadCounter++;
+        }
+
+//        Fixes rounding errors from dividing
+        if (i != employeeDTOList.size() && ((i - (employeeDTOList.size() / 10)) < employeeDTOList.size())) {
+            i = i - (employeeDTOList.size() / 10);
+            threads[threadCounter] = new Thread(new Task(employeeDAO, employeeDTOList.subList(i, employeeDTOList.size())));
+            threads[threadCounter].setName("Thread" + threadCounter);
+
+            threads[threadCounter].start();
         }
         for (Thread thread : threads) {
             thread.join();

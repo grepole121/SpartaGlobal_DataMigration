@@ -94,4 +94,11 @@ public class EmployeeDAO {
         }
         return connection;
     }
+
+    public void dropTable() throws SQLException {
+        Statement statement = connectToDatabase().createStatement();
+        String droppingTable = "DROP TABLE employees;";
+        statement.execute(droppingTable);
+
+    }
 }
