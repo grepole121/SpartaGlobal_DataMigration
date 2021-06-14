@@ -16,7 +16,7 @@ public class Task implements Runnable {
     public void run() {
         try {
             synchronized (this) {
-                Starter.addToDbConcurrent(employeeDAO, subList);
+                Starter.addToDb(employeeDAO, subList);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

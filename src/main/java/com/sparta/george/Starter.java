@@ -1,6 +1,5 @@
 package com.sparta.george;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ public class Starter {
         int startingAmountOfEmployees = employeeDAO.countAllEmployees();
 
 //        Sequential Method
-//        addToDbSeq(employeeDAO, readFile(csvFile));
+//        addToDb(employeeDAO, readFile(csvFile));
 
 //        Concurrent method
         runConcurrently(employeeDAO, readFile(csvFile), numberOfThreads);
@@ -34,41 +33,22 @@ public class Starter {
             threads[threadCounter].setName("Thread" + threadCounter);
 
             threads[threadCounter].start();
-//            addToDb(employeeDAO, employeeDTOList.subList(startOfSubList, i));
             threadCounter++;
         }
 
-        for (Thread thread: threads){
+        for (Thread thread : threads) {
             thread.join();
         }
     }
 
-    public static void addToDbConcurrent(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
+    public static void addToDb(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
         double startTime = System.nanoTime();
         int added = 0;
 
-        for (EmployeeDTO employeeDTO : employeeDTOList) {
-            employeeDAO.insertEmployee(employeeDTO);
-            added++;
-        }
+        employeeDAO.insertEmployee(employeeDTOList);
 
         double endTime = System.nanoTime();
         double timeTaken = (endTime - startTime) / 1000000000;
-        System.out.printf("Time taken for %S to add/update %d employees: %.2f seconds\n", Thread.currentThread().getName(), added, timeTaken);
-    }
-
-    public static void addToDbSeq(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
-        double startTime = System.nanoTime();
-        int added = 0;
-
-        for (EmployeeDTO employeeDTO : employeeDTOList) {
-            employeeDAO.insertEmployee(employeeDTO);
-            added++;
-        }
-
-        double endTime = System.nanoTime();
-        double timeTaken = (endTime - startTime) / 1000000000;
-        System.out.printf("Time taken to add/update %d employees: %.2f seconds\n", added, timeTaken);
     }
 
     public static List<EmployeeDTO> readFile(FileReader fileReader) throws FileNotFoundException {
