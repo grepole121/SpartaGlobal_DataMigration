@@ -7,8 +7,14 @@ import java.sql.SQLException;
 public class Main {
     public static void main(String[] args) throws SQLException, FileNotFoundException, InterruptedException {
         double startTime = System.nanoTime();
+        int added;
 
-        int added = Starter.start(10);
+//        No parameter = sequentially
+//        Otherwise parameter = number of threads for multithreading
+
+//        added = Starter.start();
+
+        added = Starter.start(10);
 
         double endTime = System.nanoTime();
         double timeTaken = (endTime - startTime) / 1000000000;

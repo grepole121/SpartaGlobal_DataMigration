@@ -13,12 +13,23 @@ public class Starter {
         employeeDAO.createTableIfNeeded();
         int startingAmountOfEmployees = employeeDAO.countAllEmployees();
 
-//        Sequential Method
-//        employeeDAO.insertEmployee(readFile(csvFile));
-
 //        Concurrent method
         runConcurrently(employeeDAO, readFile(csvFile), numberOfThreads);
 
+
+        int endingAmountOfEmployees = employeeDAO.countAllEmployees();
+        return endingAmountOfEmployees - startingAmountOfEmployees;
+    }
+
+    public static int start() throws SQLException, FileNotFoundException, InterruptedException {
+        EmployeeDAO employeeDAO = new EmployeeDAO();
+        FileReader csvFile = new FileReader("resources/employees.csv");
+        employeeDAO.dropTable();
+        employeeDAO.createTableIfNeeded();
+        int startingAmountOfEmployees = employeeDAO.countAllEmployees();
+
+//        Sequential Method
+        employeeDAO.insertEmployee(readFile(csvFile));
 
         int endingAmountOfEmployees = employeeDAO.countAllEmployees();
         return endingAmountOfEmployees - startingAmountOfEmployees;
