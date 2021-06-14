@@ -17,18 +17,16 @@ public class Starter {
 //        addToDbSeq(employeeDAO, readFile(csvFile));
 
 //        Concurrent method
-//        Thread thread = new Thread(new Task());
-//        thread.setName("Thread1");
-//        thread.start();
-//
-//        Thread thread2 = new Thread(new Task());
-//        thread2.setName("Thread2");
-//        thread2.start();
+        runConcurrently(employeeDAO, readFile(csvFile), numberOfThreads);
 
+
+        int endingAmountOfEmployees = employeeDAO.countAllEmployees();
+        return endingAmountOfEmployees - startingAmountOfEmployees;
+    }
+
+    private static void runConcurrently(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList, int numberOfThreads) throws InterruptedException {
         Thread[] threads = new Thread[numberOfThreads];
 
-
-        List<EmployeeDTO> employeeDTOList = readFile(csvFile);
         int threadCounter = 0;
         for (int i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
             int startOfSubList = i - employeeDTOList.size() / numberOfThreads;
@@ -43,9 +41,6 @@ public class Starter {
         for (Thread thread: threads){
             thread.join();
         }
-
-        int endingAmountOfEmployees = employeeDAO.countAllEmployees();
-        return endingAmountOfEmployees - startingAmountOfEmployees;
     }
 
     public static void addToDbConcurrent(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
