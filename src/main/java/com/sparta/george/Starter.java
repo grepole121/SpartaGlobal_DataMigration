@@ -7,35 +7,62 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Starter {
-    public static void start(int numberOfThreads) throws SQLException, FileNotFoundException {
+    public static int start(int numberOfThreads) throws SQLException, FileNotFoundException, InterruptedException {
         EmployeeDAO employeeDAO = new EmployeeDAO();
         FileReader csvFile = new FileReader("resources/employees.csv");
         employeeDAO.createTableIfNeeded();
+        int startingAmountOfEmployees = employeeDAO.countAllEmployees();
 
 //        Sequential Method
-//        addToDb(employeeDAO, readFile(csvFile));
+//        addToDbSeq(employeeDAO, readFile(csvFile));
 
 //        Concurrent method
-        Thread thread = new Thread(new Task());
-        thread.setName("Thread1");
-        thread.start();
+//        Thread thread = new Thread(new Task());
+//        thread.setName("Thread1");
+//        thread.start();
+//
+//        Thread thread2 = new Thread(new Task());
+//        thread2.setName("Thread2");
+//        thread2.start();
 
-        Thread thread2 = new Thread(new Task());
-        thread.setName("Thread2");
-        thread.start();
+        Thread[] threads = new Thread[numberOfThreads];
 
 
-//        List<EmployeeDTO> employeeDTOList = readFile(csvFile);
-//        for (int i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
-//            int startOfSubList = i - employeeDTOList.size() / numberOfThreads;
-//            Thread thread = new Thread(new Task());
-//            System.out.println();
-////            addToDb(employeeDAO, employeeDTOList.subList(startOfSubList, i));
-//        }
+        List<EmployeeDTO> employeeDTOList = readFile(csvFile);
+        int threadCounter = 0;
+        for (int i = employeeDTOList.size() / numberOfThreads; i <= employeeDTOList.size(); i += employeeDTOList.size() / numberOfThreads) {
+            int startOfSubList = i - employeeDTOList.size() / numberOfThreads;
+            threads[threadCounter] = new Thread(new Task(employeeDAO, employeeDTOList.subList(startOfSubList, i)));
+            threads[threadCounter].setName("Thread" + threadCounter);
 
+            threads[threadCounter].start();
+//            addToDb(employeeDAO, employeeDTOList.subList(startOfSubList, i));
+            threadCounter++;
+        }
+
+        for (Thread thread: threads){
+            thread.join();
+        }
+
+        int endingAmountOfEmployees = employeeDAO.countAllEmployees();
+        return endingAmountOfEmployees - startingAmountOfEmployees;
     }
 
-    public static void addToDb(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
+    public static void addToDbConcurrent(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
+        double startTime = System.nanoTime();
+        int added = 0;
+
+        for (EmployeeDTO employeeDTO : employeeDTOList) {
+            employeeDAO.insertEmployee(employeeDTO);
+            added++;
+        }
+
+        double endTime = System.nanoTime();
+        double timeTaken = (endTime - startTime) / 1000000000;
+        System.out.printf("Time taken for %S to add/update %d employees: %.2f seconds\n", Thread.currentThread().getName(), added, timeTaken);
+    }
+
+    public static void addToDbSeq(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
         double startTime = System.nanoTime();
         int added = 0;
 

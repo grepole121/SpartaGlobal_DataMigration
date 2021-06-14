@@ -21,6 +21,7 @@ public class EmployeeDAO {
             "salary int, " +
             "PRIMARY KEY (EmpID));";
     private final String selectingEmployees = "SELECT * FROM Employees";
+    private final String countingEmployees = "SELECT COUNT(*) FROM Employees";
     private final String addEmployee = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE EmpID=EmpID;";
 
     public int insertEmployee(EmployeeDTO employeeDTO){
@@ -81,6 +82,20 @@ public class EmployeeDAO {
             System.out.println("No records in the table");
         }
 
+    }
+
+
+    public int countAllEmployees() throws SQLException {
+        Statement statement = connectToDatabase().createStatement();
+        ResultSet resultSet = statement.executeQuery(countingEmployees);
+        if (resultSet != null) {
+            while (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } else {
+            System.out.println("No records in the table");
+        }
+        return 0;
     }
 
 
