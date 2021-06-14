@@ -8,7 +8,7 @@ import java.util.List;
 public class Starter {
     public static int start(int numberOfThreads) throws SQLException, FileNotFoundException, InterruptedException {
         EmployeeDAO employeeDAO = new EmployeeDAO();
-        FileReader csvFile = new FileReader("resources/EmployeeRecordsLarge.csv");
+        FileReader csvFile = new FileReader("resources/employees.csv");
         employeeDAO.dropTable();
         employeeDAO.createTableIfNeeded();
         int startingAmountOfEmployees = employeeDAO.countAllEmployees();
@@ -37,16 +37,13 @@ public class Starter {
             threadCounter++;
         }
 
-//        Fixes rounding errors from dividing
-        if (i != employeeDTOList.size() && ((i - (employeeDTOList.size() / 10)) < employeeDTOList.size())) {
-            i = i - (employeeDTOList.size() / 10);
-            threads[threadCounter] = new Thread(new Task(employeeDAO, employeeDTOList.subList(i, employeeDTOList.size())));
-            threads[threadCounter].setName("Thread" + threadCounter);
-
-            threads[threadCounter].start();
+        for (int j = 0; j < threadCounter; j++) {
+            threads[j].join();
         }
-        for (Thread thread : threads) {
-            thread.join();
+        //        Fixes rounding errors from dividing
+        if (i != employeeDTOList.size() && ((i - (employeeDTOList.size() / 10)) < employeeDTOList.size())) {
+            i -= (employeeDTOList.size() / 10);
+            employeeDAO.insertEmployee(employeeDTOList.subList(i, employeeDTOList.size()));
         }
     }
 
