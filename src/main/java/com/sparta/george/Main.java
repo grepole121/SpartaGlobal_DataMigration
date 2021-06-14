@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) throws SQLException, FileNotFoundException, InterruptedException {
         double startTime = System.nanoTime();
 
-        int added = Starter.start(10);
+        int added = Starter.start(100);
 
         double endTime = System.nanoTime();
         double timeTaken = (endTime - startTime) / 1000000000;

@@ -13,7 +13,7 @@ public class Starter {
         int startingAmountOfEmployees = employeeDAO.countAllEmployees();
 
 //        Sequential Method
-//        addToDb(employeeDAO, readFile(csvFile));
+//        employeeDAO.insertEmployee(readFile(csvFile));
 
 //        Concurrent method
         runConcurrently(employeeDAO, readFile(csvFile), numberOfThreads);
@@ -35,21 +35,11 @@ public class Starter {
             threads[threadCounter].start();
             threadCounter++;
         }
-
         for (Thread thread : threads) {
             thread.join();
         }
     }
 
-    public static void addToDb(EmployeeDAO employeeDAO, List<EmployeeDTO> employeeDTOList) throws FileNotFoundException {
-        double startTime = System.nanoTime();
-        int added = 0;
-
-        employeeDAO.insertEmployee(employeeDTOList);
-
-        double endTime = System.nanoTime();
-        double timeTaken = (endTime - startTime) / 1000000000;
-    }
 
     public static List<EmployeeDTO> readFile(FileReader fileReader) throws FileNotFoundException {
         double startTime = System.nanoTime();

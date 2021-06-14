@@ -14,7 +14,8 @@ public class EmployeeDTO {
     private Date dateOfJoining;
     private int salary;
 
-    public EmployeeDTO(){}
+    public EmployeeDTO() {
+    }
 
     public EmployeeDTO(int empID, String namePrefix, String firstName, String middleInitial, String lastName, String gender, String email, Date dateOfBirth, Date dateOfJoining, int salary) {
         this.empID = empID;
@@ -28,6 +29,7 @@ public class EmployeeDTO {
         this.dateOfJoining = dateOfJoining;
         this.salary = salary;
     }
+
     public int getEmpID() {
         return empID;
     }

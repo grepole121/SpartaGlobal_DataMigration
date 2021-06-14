@@ -1,11 +1,10 @@
 package com.sparta.george;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 public class Task implements Runnable {
-    private List<EmployeeDTO> subList;
-    private EmployeeDAO employeeDAO;
+    private final List<EmployeeDTO> subList;
+    private final EmployeeDAO employeeDAO;
 
     public Task(EmployeeDAO employeeDAO, List<EmployeeDTO> subList) {
         this.subList = subList;
@@ -14,12 +13,8 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        try {
-            synchronized (this) {
-                Starter.addToDb(employeeDAO, subList);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        synchronized (this) {
+            employeeDAO.insertEmployee(subList);
         }
     }
 }
